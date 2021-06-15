@@ -28,15 +28,15 @@ Menus.prototype.defaultFont = 'Helvetica';
 Menus.prototype.defaultFontSize = '12';
 
 /**
- * Sets the default font size.
+ * Sets the default font.
  */
-Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'data','arrange', 'extras', 'help'];
+Menus.prototype.defaultFonts = ['Helvetica', 'Verdana', 'Times New Roman', 'Garamond', 'Comic Sans MS',
+           		             'Courier New', 'Georgia', 'Lucida Console', 'Tahoma'];
 
 /**
  * Adds the label menu items to the given menu and parent.
  */
-Menus.prototype.defaultFonts = ['Helvetica', 'Verdana', 'Times New Roman', 'Garamond', 'Comic Sans MS',
-           		             'Courier New', 'Georgia', 'Lucida Console', 'Tahoma'];
+Menus.prototype.defaultMenuItems = ['file', 'edit', 'view', 'data','arrange', 'extras', 'help'];
 
 /**
  * Adds the label menu items to the given menu and parent.
