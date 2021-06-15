@@ -1,0 +1,371 @@
+<!--
+  Copyright (c) 2006-2013, JGraph Ltd
+  
+  Toolbar example for mxGraph. This example demonstrates using
+  existing cells as templates for creating new cells.
+-->
+<html>
+<head>
+	<title>Web Scada 2021.6.15 Demo</title>
+
+	<!-- Sets the basepath for the library if not in same directory -->
+	<script type="text/javascript">
+		mxBasePath = './javascript/src';
+	</script>
+
+	<!-- Loads and initializes the library -->
+	<script type="text/javascript" src="./javascript/src/js/mxClient.js"></script>
+
+
+	<!-- Example code -->
+	<script type="text/javascript">
+		// Program starts here. Creates a sample graph in the
+		// DOM node with the specified ID. This function is invoked
+		// from the onLoad event handler of the document (see below).
+		function main()
+		{
+			// Defines an icon for creating new connections in the connection handler.
+			// This will automatically disable the highlighting of the source vertex.
+			mxConnectionHandler.prototype.connectImage = new mxImage('./javascript/src/images/connector.gif', 16, 16);
+		
+			// Checks if browser is supported
+			if (!mxClient.isBrowserSupported())
+			{
+				// Displays an error message if the browser is
+				// not supported.
+				mxUtils.error('Browser is not supported!', 200, false);
+			}
+			else
+			{
+				// Creates the div for the toolbar
+				var tbContainer = document.createElement('div');
+				tbContainer.style.position = 'absolute';
+				tbContainer.style.overflow = 'hidden';
+				tbContainer.style.padding = '2px';
+				tbContainer.style.left = '0px';
+				tbContainer.style.top = '26px';
+				tbContainer.style.width = '24px';
+				tbContainer.style.bottom = '0px';
+				
+				document.body.appendChild(tbContainer);
+			
+				// Creates new toolbar without event processing
+				var toolbar = new mxToolbar(tbContainer);
+				toolbar.enabled = false
+				
+				// Creates the div for the graph
+				container = document.createElement('div');
+				container.style.position = 'absolute';
+				container.style.overflow = 'hidden';
+				container.style.left = '24px';
+				container.style.top = '26px';
+				container.style.right = '0px';
+				container.style.bottom = '0px';
+				container.style.background = 'url("./javascript/src/images/grid.gif")';
+
+                // Note that we're using the container scrollbars for the graph so that the
+				// container extends to the parent div inside the window
+                var content = document.createElement('div');
+                lorem = 'This is a Demo for SUPCON'                
+				mxUtils.write(content, lorem );
+
+				var wnd = new mxWindow('Properties', content, 500, 50, 220, 224, true, true);
+				
+				wnd.setMaximizable(true);
+				wnd.setResizable(true);
+				wnd.setVisible(true);
+               
+                mxLog.show();
+				document.body.appendChild(container);
+				
+				// Workaround for Internet Explorer ignoring certain styles
+				if (mxClient.IS_QUIRKS)
+				{
+					document.body.style.overflow = 'hidden';
+					new mxDivResizer(tbContainer);
+					new mxDivResizer(container);
+				}
+
+				// Creates the graph inside the given container using a model
+				// with a custom root and two layers. Layers can also be added
+				// dynamically using var layer = model.add(root, new mxCell()).
+				var root = new mxCell();
+				var layer0 = root.insert(new mxCell());
+				var layer1 = root.insert(new mxCell()); 
+
+				// Creates the model and the graph inside the container
+				// using the fastest rendering available on the browser
+				var model = new mxGraphModel(root);
+				var graph = new mxGraph(container, model);
+				graph.dropEnabled = true;
+				
+				// Matches DnD inside the graph
+				mxDragSource.prototype.getDropTarget = function(graph, x, y)
+				{
+					var cell = graph.getCellAt(x, y);
+					
+					if (!graph.isValidDropTarget(cell))
+					{
+						cell = null;
+					}
+					
+					return cell;
+				};
+
+				// Enables new connections in the graph
+				graph.setConnectable(true);
+				graph.setMultigraph(false);
+
+				// Stops editing on enter or escape keypress
+				var keyHandler = new mxKeyHandler(graph);
+				var rubberband = new mxRubberband(graph);
+				
+				var addVertex = function(icon, w, h, style)
+				{
+					var vertex = new mxCell(null, new mxGeometry(0, 0, w, h), style);
+					vertex.setVertex(true);
+				
+					addToolbarItem(graph, toolbar, vertex, icon);
+				};
+				
+				addVertex('./javascript/src/images/swimlane.gif', 120, 160, 'shape=swimlane;startSize=20;');
+				addVertex('./javascript/src/images/rectangle.gif', 100, 40, '');
+				addVertex('./javascript/src/images/rounded.gif', 100, 40, 'shape=rounded');
+				addVertex('./javascript/src/images/ellipse.gif', 40, 40, 'shape=ellipse');
+				addVertex('./javascript/src/images/rhombus.gif', 40, 40, 'shape=rhombus');
+				addVertex('./javascript/src/images/triangle.gif', 40, 40, 'shape=triangle');
+				addVertex('./javascript/src/images/cylinder.gif', 40, 40, 'shape=cylinder');
+				addVertex('./javascript/src/images/actor.gif', 30, 40, 'shape=actor');
+				toolbar.addLine();
+				var parent = graph.getDefaultParent();
+                model.beginUpdate();
+				try
+				{
+					var v1 = graph.insertVertex(layer0, null, 'Hello,', 20, 20, 80, 30, 'fillColor=#C0C0C0');
+					var v2 = graph.insertVertex(layer0, null, 'Hello,', 200, 20, 80, 30, 'fillColor=#C0C0C0');
+					var v3 = graph.insertVertex(layer1, null, 'SUPCON!', 110, 150, 80, 30);
+					var e1 = graph.insertEdge(layer0, null, '', v1, v3, 'strokeColor=#0C0C0C');
+					e1.geometry.points = [new mxPoint(60, 165)];
+					var e2 = graph.insertEdge(layer0, null, '', v2, v3);
+					e2.geometry.points = [new mxPoint(240, 165)];
+					var e3 = graph.insertEdge(layer0, null, '', v1, v2,
+							'edgeStyle=topToBottomEdgeStyle');
+					e3.geometry.points = [new mxPoint(150, 30)];
+					var e4 = graph.insertEdge(layer0, null, '', v2, v1,
+							'strokeColor=#0C0C0C;edgeStyle=topToBottomEdgeStyle');
+					e4.geometry.points = [new mxPoint(150, 40)];
+
+				}
+				finally
+				{
+					// Updates the display
+					model.endUpdate();
+				}
+                
+                
+                document.body.appendChild(mxUtils.button('Layer 0', function()
+				{
+					model.setVisible(layer0, !model.isVisible(layer0));
+				}));
+				
+				document.body.appendChild(mxUtils.button('Layer 1', function()
+				{
+					model.setVisible(layer1, !model.isVisible(layer1));
+				}));
+
+				button.style.position = 'absolute';
+				button.style.left = '2px';
+				button.style.top = '2px';
+				
+				document.body.appendChild(button);
+			}
+		}
+
+		function addToolbarItem(graph, toolbar, prototype, image)
+		{
+			// Function that is executed when the image is dropped on
+			// the graph. The cell argument points to the cell under
+			// the mousepointer if there is one.
+			var funct = function(graph, evt, cell)
+			{
+				graph.stopEditing(false);
+
+				var pt = graph.getPointForEvent(evt);
+				var vertex = graph.getModel().cloneCell(prototype);
+				vertex.geometry.x = pt.x;
+				vertex.geometry.y = pt.y;
+				
+				graph.setSelectionCells(graph.importCells([vertex], 0, 0, cell));
+			}
+
+			// Creates the image which is used as the drag icon (preview)
+			var img = toolbar.addMode(null, image, funct);
+			mxUtils.makeDraggable(img, graph, funct);
+		}
+        (function()
+		{
+			// Enables rotation handle
+			mxVertexHandler.prototype.rotationEnabled = true;
+			
+			// Enables managing of sizers
+			mxVertexHandler.prototype.manageSizers = true;
+			
+			// Enables live preview
+			mxVertexHandler.prototype.livePreview = true;
+	
+			// Sets constants for touch style
+			mxConstants.HANDLE_SIZE = 16;
+			mxConstants.LABEL_HANDLE_SIZE = 7;
+	
+			// Larger tolerance and grid for real touch devices
+			if (mxClient.IS_TOUCH || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0)
+			{
+				mxShape.prototype.svgStrokeTolerance = 18;
+				mxVertexHandler.prototype.tolerance = 12;
+				mxEdgeHandler.prototype.tolerance = 12;
+				mxGraph.prototype.tolerance = 12;
+			}
+			
+			// One finger pans (no rubberband selection) must start regardless of mouse button
+			mxPanningHandler.prototype.isPanningTrigger = function(me)
+			{
+				var evt = me.getEvent();
+				
+			 	return (me.getState() == null && !mxEvent.isMouseEvent(evt)) ||
+			 		(mxEvent.isPopupTrigger(evt) && (me.getState() == null ||
+			 		mxEvent.isControlDown(evt) || mxEvent.isShiftDown(evt)));
+			};
+	
+			// Don't clear selection if multiple cells selected
+			var graphHandlerMouseDown = mxGraphHandler.prototype.mouseDown;
+			mxGraphHandler.prototype.mouseDown = function(sender, me)
+			{
+				graphHandlerMouseDown.apply(this, arguments);
+	
+				if (this.graph.isCellSelected(me.getCell()) && this.graph.getSelectionCount() > 1)
+				{
+					this.delayedSelection = false;
+				}
+			};
+	
+			// On connect the target is selected and we clone the cell of the preview edge for insert
+			mxConnectionHandler.prototype.selectCells = function(edge, target)
+			{
+				if (target != null)
+				{
+					this.graph.setSelectionCell(target);
+				}
+				else
+				{
+					this.graph.setSelectionCell(edge);
+				}
+			};
+	
+			// Overrides double click handling to use the tolerance
+			var graphDblClick = mxGraph.prototype.dblClick;
+			mxGraph.prototype.dblClick = function(evt, cell)
+			{
+				if (cell == null)
+				{
+					var pt = mxUtils.convertPoint(this.container,
+						mxEvent.getClientX(evt), mxEvent.getClientY(evt));
+					cell = this.getCellAt(pt.x, pt.y);
+				}
+	
+				graphDblClick.call(this, evt, cell);
+			};
+	
+			// Rounded edge and vertex handles
+			var touchHandle = new mxImage('./javascript/src/images/handle-main.png', 17, 17);
+			mxVertexHandler.prototype.handleImage = touchHandle;
+			mxEdgeHandler.prototype.handleImage = touchHandle;
+			mxOutline.prototype.sizerImage = touchHandle;
+			
+			// Pre-fetches touch handle
+			new Image().src = touchHandle.src;
+	
+			var vertexHandlerHideSizers = mxVertexHandler.prototype.hideSizers;
+			mxVertexHandler.prototype.hideSizers = function()
+			{
+				vertexHandlerHideSizers.apply(this, arguments);
+				
+				if (this.connectorImg != null)
+				{
+					this.connectorImg.style.visibility = 'hidden';
+				}
+			};
+			
+			var vertexHandlerReset = mxVertexHandler.prototype.reset;
+			mxVertexHandler.prototype.reset = function()
+			{
+				vertexHandlerReset.apply(this, arguments);
+				
+				if (this.connectorImg != null)
+				{
+					this.connectorImg.style.visibility = '';
+				}
+			};
+			
+			var vertexHandlerRedrawHandles = mxVertexHandler.prototype.redrawHandles;
+			mxVertexHandler.prototype.redrawHandles = function()
+			{
+				vertexHandlerRedrawHandles.apply(this);
+	
+				if (this.state != null && this.connectorImg != null)
+				{
+					var pt = new mxPoint();
+					var s = this.state;
+					
+					// Top right for single-sizer
+					if (mxVertexHandler.prototype.singleSizer)
+					{
+						pt.x = s.x + s.width - this.connectorImg.offsetWidth / 2;
+						pt.y = s.y - this.connectorImg.offsetHeight / 2;
+					}
+					else
+					{
+						pt.x = s.x + s.width + mxConstants.HANDLE_SIZE / 2 + 4 + this.connectorImg.offsetWidth / 2;
+						pt.y = s.y + s.height / 2;
+					}
+					
+					var alpha = mxUtils.toRadians(mxUtils.getValue(s.style, mxConstants.STYLE_ROTATION, 0));
+					
+					if (alpha != 0)
+					{
+						var cos = Math.cos(alpha);
+						var sin = Math.sin(alpha);
+						
+						var ct = new mxPoint(s.getCenterX(), s.getCenterY());
+						pt = mxUtils.getRotatedPoint(pt, cos, sin, ct);
+					}
+					
+					this.connectorImg.style.left = (pt.x - this.connectorImg.offsetWidth / 2) + 'px';
+					this.connectorImg.style.top = (pt.y - this.connectorImg.offsetHeight / 2) + 'px';
+				}
+			};
+			
+			var vertexHandlerDestroy = mxVertexHandler.prototype.destroy;
+			mxVertexHandler.prototype.destroy = function(sender, me)
+			{
+				vertexHandlerDestroy.apply(this, arguments);
+	
+				if (this.connectorImg != null)
+				{
+					this.connectorImg.parentNode.removeChild(this.connectorImg);
+					this.connectorImg = null;
+				}
+			};
+			
+			// Pre-fetches touch connector
+			new Image().src = connectorSrc;
+		})();
+
+
+	</script>
+</head>
+
+<!-- Calls the main function after the page has loaded. Container is dynamically created. -->
+<body onload="main(document.getElementById('graphContainer'))">
+   
+</body>
+</html>
