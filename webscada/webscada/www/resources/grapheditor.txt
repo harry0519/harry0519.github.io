@@ -323,6 +323,7 @@ writingDirection=Writing Direction
 zoom=Zoom
 zoomIn=Zoom In
 zoomOut=Zoom Out
+data=Data
 dataview=Data View
 rotate=Rotate
 move=Move
